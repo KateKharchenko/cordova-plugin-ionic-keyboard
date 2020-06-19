@@ -75,7 +75,6 @@ public class CDVIonicKeyboard extends CordovaPlugin {
                     //http://stackoverflow.com/a/4737265/1091751 detect if keyboard is showing
                     FrameLayout content = (FrameLayout) cordova.getActivity().findViewById(android.R.id.content);
                     rootView = content.getRootView();
-                    
                     list = new OnGlobalLayoutListener() {
                         int previousHeightDiff = 0;
                         @Override
@@ -128,7 +127,13 @@ public class CDVIonicKeyboard extends CordovaPlugin {
                         private void possiblyResizeChildOfContent() {
                             int usableHeightNow = computeUsableHeight();
                             if (usableHeightNow != usableHeightPrevious) {
-                                frameLayoutParams.height = usableHeightNow;
+                                int usableHeightSansKeyboard = mChildOfContent.getRootView().getHeight();
+                                int heightDifference = usableHeightSansKeyboard - usableHeightNow;
+                                if (heightDifference > (usableHeightSansKeyboard/4)) {
+                                    frameLayoutParams.height = usableHeightSansKeyboard - heightDifference;
+                                } else {
+                                    frameLayoutParams.height = usableHeightSansKeyboard;
+                                }
                                 mChildOfContent.requestLayout();
                                 usableHeightPrevious = usableHeightNow;
                             }
@@ -137,7 +142,16 @@ public class CDVIonicKeyboard extends CordovaPlugin {
                         private int computeUsableHeight() {
                             Rect r = new Rect();
                             mChildOfContent.getWindowVisibleDisplayFrame(r);
-                            return r.bottom;
+                            if ( checkStatusBarTransparent() ) return r.bottom;
+                            return r.height();
+                        }
+
+                        private boolean checkStatusBarTransparent() {
+                            final Window window = cordova.getActivity().getWindow();
+                            console.log(window.getStatusBarColor() == Color.TRANSPARENT);
+                            console.log(window.getDecorView().getSystemUiVisibility() == View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+                            return ( window.getStatusBarColor() == Color.TRANSPARENT
+                                    || window.getDecorView().getSystemUiVisibility() == View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN );
                         }
                     };
 
