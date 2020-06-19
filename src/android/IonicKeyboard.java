@@ -25,7 +25,7 @@ import android.graphics.Point;
 import android.os.Build;
 import android.widget.FrameLayout;
 
-public class CDVIonicKeyboard extends CordovaPlugin {
+public class IonicKeyboard extends CordovaPlugin {
     private OnGlobalLayoutListener list;
     private View rootView;
     private View mChildOfContent;
@@ -148,8 +148,6 @@ public class CDVIonicKeyboard extends CordovaPlugin {
 
                         private boolean checkStatusBarTransparent() {
                             final Window window = cordova.getActivity().getWindow();
-                            console.log(window.getStatusBarColor() == Color.TRANSPARENT);
-                            console.log(window.getDecorView().getSystemUiVisibility() == View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
                             return ( window.getStatusBarColor() == Color.TRANSPARENT
                                     || window.getDecorView().getSystemUiVisibility() == View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN );
                         }
